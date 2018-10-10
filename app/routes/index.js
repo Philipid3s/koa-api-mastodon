@@ -9,7 +9,7 @@ router
     .get('/', (ctx, next) => {
         ctx.body = "Hello World!";
     })
-    .get('/hello/:id', (ctx, next) => {
+    .get('/test/:id', (ctx, next) => {
         ctx.body = "Hello " + ctx.params['id'];
         
         console.log("IP: %s", ctx.ip);
@@ -19,8 +19,17 @@ router
         console.log("Method: %s", ctx.method);
     })
     .get('/api', async (ctx, next) => {
+        // Get list of Mastodon messages
         await mastodon.get('timelines/home', {})
         .then(resp => {console.log(resp.data); ctx.body = resp.data;});
+    })
+    .post('/api', async (ctx, next) => {
+        // Post a new status
+        const params = {
+            status: "Hello Mastodon !"
+        }
+        await mastodon.post('statuses', params)
+        .then(resp => {console.log(resp.data);});
     });
 
 module.exports = {
